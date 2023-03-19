@@ -21,5 +21,5 @@ const postSchema = new mongoose_1.default.Schema({
         },
     ],
 });
+postSchema.statics.build = (createPostDto) => new exports.Post(createPostDto);
 exports.Post = mongoose_1.default.model('Post', postSchema);
-// export default Post;

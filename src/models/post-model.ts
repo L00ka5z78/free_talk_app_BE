@@ -1,4 +1,9 @@
 import mongoose from 'mongoose';
+import {
+  IPostDoc,
+  IPostModel,
+  ICreatePostDto,
+} from '../interfaces/post-interface';
 
 const postSchema = new mongoose.Schema({
   title: {
@@ -16,7 +21,7 @@ const postSchema = new mongoose.Schema({
     },
   ],
 });
+postSchema.statics.build = (createPostDto: ICreatePostDto) =>
+  new Post(createPostDto);
 
-export const Post = mongoose.model('Post', postSchema);
-
-// export default Post;
+export const Post = mongoose.model<IPostDoc, IPostModel>('Post', postSchema);

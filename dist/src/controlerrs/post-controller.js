@@ -11,14 +11,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.showPost = exports.deletePost = exports.updatePost = exports.createNewPost = void 0;
 const post_model_1 = require("../models/post-model");
+const user_model_1 = require("../models/user-model");
 const common_1 = require("../common");
 const createNewPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, content } = req.body;
     if (!title || !content) {
         return next(new common_1.BadRequestError('Fill out all required fields, please'));
     }
-    const newPost = new post_model_1.Post({ title, content });
+    const newPost = post_model_1.Post.build({ title, content });
     yield newPost.save();
+    yield user_model_1.User.findOneAndUpdate({ _id: req.currentUser.userId }, { $push: { posts: newPost._id } });
     res.status(201).send(newPost);
 });
 exports.createNewPost = createNewPost;
@@ -63,10 +65,13 @@ const deletePost = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     try {
         yield post_model_1.Post.findOneAndRemove({ _id: id });
     }
-    catch (error) {
+    catch (err) {
         next(new Error('Cant delete this post'));
     }
-    res.status(200).json({ success: true });
+    const user = yield user_model_1.User.findOneAndUpdate({ _id: req.currentUser.userId }, { $pull: { posts: id } }, { new: true });
+    if (!user)
+        return next(new Error());
+    res.status(200).send(user);
 });
 exports.deletePost = deletePost;
 const showPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
