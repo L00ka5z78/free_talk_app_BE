@@ -1,4 +1,3 @@
-import { CustomError } from '../interfaces/customErr';
 import { Request, Response, NextFunction } from 'express';
 import { Comment } from '../models/comment-model';
 import { Post } from '../models/post-model';
@@ -71,9 +70,9 @@ export const updateComment = async (
       { new: true }
     );
   } catch (err) {
-    const error = new Error('Comment can not be updated') as CustomError;
-    error.status = 400;
-    next(error);
+    return next(new BadRequestError('Comment can not be updated'));
+    //   error.status = 400;
+    //   next(error);
   }
   res.status(200).send(updatedComment);
 };

@@ -54,9 +54,9 @@ const updateComment = (req, res, next) => __awaiter(void 0, void 0, void 0, func
         updatedComment = yield comment_model_1.Comment.findByIdAndUpdate({ _id: id }, { $set: { content, userName } }, { new: true });
     }
     catch (err) {
-        const error = new Error('Comment can not be updated');
-        error.status = 400;
-        next(error);
+        return next(new common_1.BadRequestError('Comment can not be updated'));
+        //   error.status = 400;
+        //   next(error);
     }
     res.status(200).send(updatedComment);
 });

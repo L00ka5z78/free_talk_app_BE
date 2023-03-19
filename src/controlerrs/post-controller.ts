@@ -1,4 +1,3 @@
-import { CustomError } from '../interfaces/customErr';
 import { Request, Response, NextFunction } from 'express';
 import { Post } from '../models/post-model';
 import { BadRequestError } from '../common';

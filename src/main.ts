@@ -14,9 +14,12 @@ import {
 } from './routers';
 import { startConnection } from './utils/dbConnection';
 import config from './config/config';
-import { notFoundErr } from './middleware/notFoundErr';
-import { errMiddleware } from './middleware/errMiddleware';
-import { currentUser, requireAuth } from './common';
+import {
+  currentUser,
+  errorHandler,
+  requireAuth,
+  NotFoundError,
+} from './common';
 
 const app = express();
 app.use(
@@ -28,7 +31,7 @@ app.use(
 app.set('trust proxy', true);
 app.use(
   urlencoded({
-    extended: false /** added after etting proxy to true 51. */,
+    extended: false /** added after getting proxy to true 51. */,
     // extended: true,
   })
 );
@@ -48,8 +51,11 @@ app.use('/api/comment', requireAuth, deleteCommentRouter);
 app.use('/api/comment', requireAuth, updateCommentRouter);
 app.use('/api/comment', showCommentRouter);
 
-app.all('*', notFoundErr);
-app.use(errMiddleware);
+app.all('*', (req, res, next) => {
+  next(new NotFoundError());
+});
+app.use(errorHandler);
+
 startConnection();
 
 app.listen(8080, () =>

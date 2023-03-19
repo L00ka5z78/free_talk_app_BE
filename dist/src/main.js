@@ -10,8 +10,6 @@ const cors_1 = __importDefault(require("cors"));
 const routers_1 = require("./routers");
 const dbConnection_1 = require("./utils/dbConnection");
 const config_1 = __importDefault(require("./config/config"));
-const notFoundErr_1 = require("./middleware/notFoundErr");
-const errMiddleware_1 = require("./middleware/errMiddleware");
 const common_1 = require("./common");
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
@@ -20,7 +18,7 @@ app.use((0, cors_1.default)({
 }));
 app.set('trust proxy', true);
 app.use((0, body_parser_1.urlencoded)({
-    extended: false /** added after etting proxy to true 51. */,
+    extended: false /** added after getting proxy to true 51. */,
     // extended: true,
 }));
 app.use((0, body_parser_1.json)());
@@ -35,7 +33,9 @@ app.use('/api/comment', common_1.requireAuth, routers_1.newCommentRouter);
 app.use('/api/comment', common_1.requireAuth, routers_1.deleteCommentRouter);
 app.use('/api/comment', common_1.requireAuth, routers_1.updateCommentRouter);
 app.use('/api/comment', routers_1.showCommentRouter);
-app.all('*', notFoundErr_1.notFoundErr);
-app.use(errMiddleware_1.errMiddleware);
+app.all('*', (req, res, next) => {
+    next(new common_1.NotFoundError());
+});
+app.use(common_1.errorHandler);
 (0, dbConnection_1.startConnection)();
 app.listen(8080, () => console.log(`Server is ON and running on http://${config_1.default.server.HOST}:${config_1.default.server.PORT}`));
