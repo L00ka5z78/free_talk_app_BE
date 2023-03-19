@@ -21,7 +21,7 @@ const signUpUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     const { email, password } = req.body;
     const user = yield user_model_1.User.findOne({ email });
     if (user)
-        return next(new Error('User already exists'));
+        return next(new common_1.BadRequestError('User already exists'));
     const newUser = new user_model_1.User({
         email,
         password,
@@ -38,11 +38,11 @@ const signInUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     const { email, password } = req.body;
     const user = yield user_model_1.User.findOne({ email });
     if (!user)
-        return next(new Error('Wrong credentials'));
+        return next(new common_1.BadRequestError('Wrong credentials'));
     //check if password match
     const isEqual = yield common_1.authenticationService.comparePassword(user.password, password);
     if (!isEqual)
-        return next(new Error('Wrong credentials'));
+        return next(new common_1.BadRequestError('Wrong credentials'));
     //generate token
     const token = jsonwebtoken_1.default.sign({ email, userId: user._id }, config_1.default.jsonWebToken.JWT_KEY);
     //cokkie session start

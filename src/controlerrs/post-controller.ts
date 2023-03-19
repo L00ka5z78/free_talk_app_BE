@@ -1,6 +1,7 @@
 import { CustomError } from '../interfaces/customErr';
 import { Request, Response, NextFunction } from 'express';
 import { Post } from '../models/post-model';
+import { BadRequestError } from '../common';
 
 export const createNewPost = async (
   req: Request,
@@ -10,11 +11,7 @@ export const createNewPost = async (
   const { title, content } = req.body;
 
   if (!title || !content) {
-    const error = new Error(
-      'Fill out all required fields, please'
-    ) as CustomError;
-    error.status = 400;
-    return next(error);
+    return next(new BadRequestError('Fill out all required fields, please'));
   }
   const newPost = new Post({ title, content });
   await newPost.save();
@@ -47,9 +44,7 @@ export const updatePost = async (
   const { id } = req.params;
   const { content, title } = req.body;
   if (!id) {
-    const error = new Error('Id is required') as CustomError;
-    error.status = 400;
-    next(error);
+    return next(new BadRequestError('Id is required'));
   }
 
   let updatedPost;
@@ -60,9 +55,7 @@ export const updatePost = async (
       { new: true }
     );
   } catch (err) {
-    const error = new Error('Post can not be updated') as CustomError;
-    error.status = 400;
-    next(error);
+    return next(new BadRequestError('Post can not be updated'));
   }
   res.status(200).send(updatedPost);
 };
@@ -74,9 +67,7 @@ export const deletePost = async (
 ) => {
   const { id } = req.params;
   if (!id) {
-    const error = new Error('Id is required') as CustomError;
-    error.status = 400;
-    next(error);
+    return next(new BadRequestError('Id is required'));
   }
   try {
     await Post.findOneAndRemove({ _id: id });

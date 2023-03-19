@@ -26,8 +26,8 @@ app.use((0, body_parser_1.urlencoded)({
 app.use((0, body_parser_1.json)());
 app.use((0, cookie_session_1.default)({ signed: false, secure: false }));
 app.use(common_1.currentUser);
-//requireAuth causes error in postman: sth went wrong
-app.use('/api/post', common_1.requireAuth, routers_1.newPostRouter);
+//requireAuth causes error in postman: sth went wrong from my custom err
+app.use('/api/post', routers_1.newPostRouter);
 app.use('/api/post', common_1.requireAuth, routers_1.deletePostRouter);
 app.use('/api/post', common_1.requireAuth, routers_1.updatePostRouter);
 app.use('/api/post', routers_1.showPostRouter);

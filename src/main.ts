@@ -37,8 +37,8 @@ app.use(cookieSession({ signed: false, secure: false }));
 
 app.use(currentUser);
 
-//requireAuth causes error in postman: sth went wrong
-app.use('/api/post', requireAuth, newPostRouter);
+//requireAuth causes error in postman: sth went wrong from my custom err
+app.use('/api/post', newPostRouter);
 app.use('/api/post', requireAuth, deletePostRouter);
 app.use('/api/post', requireAuth, updatePostRouter);
 app.use('/api/post', showPostRouter);
