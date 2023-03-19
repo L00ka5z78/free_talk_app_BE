@@ -12,26 +12,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.signUpRouter = void 0;
+exports.signInRouter = void 0;
 const express_1 = require("express");
 const user_model_1 = require("../../models/user-model");
+const index_1 = require("../../common/index");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../../config/config"));
 const router = (0, express_1.Router)();
-exports.signUpRouter = router;
-router.post('/signup', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.signInRouter = router;
+router.post('/signin', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     const user = yield user_model_1.User.findOne({ email });
-    if (user)
-        return next(new Error('User already exists'));
-    const newUser = new user_model_1.User({
-        email,
-        password,
-    });
-    yield newUser.save();
-    //start cookie session
-    req.session = {
-        jwt: jsonwebtoken_1.default.sign({ email, userId: newUser._id }, config_1.default.jsonWebToken.JWT_KEY),
-    };
-    res.status(201).send(newUser);
+    if (!user)
+        return next(new Error('Wrong credentials'));
+    //check if password match
+    const isEqual = yield index_1.authenticationService.comparePassword(user.password, password);
+    if (!isEqual)
+        return next(new Error('Wrong credentials'));
+    //generate token
+    const token = jsonwebtoken_1.default.sign({ email, userId: user._id }, config_1.default.jsonWebToken.JWT_KEY);
+    //cokkie session start
+    req.session = { jwt: token };
+    res.status(200).send(user);
 }));

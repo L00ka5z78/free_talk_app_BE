@@ -1,5 +1,6 @@
 import express from 'express';
 import { json, urlencoded } from 'body-parser';
+import cookieSession from 'cookie-session';
 import cors from 'cors';
 import {
   newPostRouter,
@@ -23,12 +24,15 @@ app.use(
     optionsSuccessStatus: 200,
   })
 );
+app.set('trust proxy', true);
 app.use(
   urlencoded({
-    extended: true,
+    extended: false /** added after etting proxy to true 51. */,
+    // extended: true,
   })
 );
 app.use(json());
+app.use(cookieSession({ signed: false, secure: false }));
 
 app.use('/api/post', newPostRouter);
 app.use('/api/post', deletePostRouter);

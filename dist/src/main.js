@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = require("body-parser");
+const cookie_session_1 = __importDefault(require("cookie-session"));
 const cors_1 = __importDefault(require("cors"));
 const routers_1 = require("./routers");
 const dbConnection_1 = require("./utils/dbConnection");
@@ -16,10 +17,13 @@ app.use((0, cors_1.default)({
     origin: '*',
     optionsSuccessStatus: 200,
 }));
+app.set('trust proxy', true);
 app.use((0, body_parser_1.urlencoded)({
-    extended: true,
+    extended: false /** added after etting proxy to true 51. */,
+    // extended: true,
 }));
 app.use((0, body_parser_1.json)());
+app.use((0, cookie_session_1.default)({ signed: false, secure: false }));
 app.use('/api/post', routers_1.newPostRouter);
 app.use('/api/post', routers_1.deletePostRouter);
 app.use('/api/post', routers_1.updatePostRouter);
