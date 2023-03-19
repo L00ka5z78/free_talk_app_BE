@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction, Router } from 'express';
+import { Router } from 'express';
 import { currentUser } from '../../middleware/current-user';
 import { currUser } from '../../controlerrs/user-controller';
 

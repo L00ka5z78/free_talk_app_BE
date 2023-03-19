@@ -12,13 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.showComment = exports.updateComment = exports.deleteComment = exports.createNewComment = void 0;
 const comment_model_1 = require("../models/comment-model");
 const post_model_1 = require("../models/post-model");
+const common_1 = require("../common");
 const createNewComment = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { userName, content } = req.body;
     const { postId } = req.params;
     if (!content) {
-        const error = new Error('Fill out all required fields, please');
-        error.status = 400;
-        return next(error);
+        return next(new common_1.BadRequestError('Fill out all required fields, please'));
     }
     const newComment = new comment_model_1.Comment({
         userName: userName ? userName : 'anonymous',
@@ -32,9 +31,7 @@ exports.createNewComment = createNewComment;
 const deleteComment = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { commentId, postId } = req.params;
     if (!commentId || postId) {
-        const error = new Error('Id is required');
-        error.status = 400;
-        next(error);
+        return next(new common_1.BadRequestError('Id is required'));
     }
     try {
         yield comment_model_1.Comment.findOneAndRemove({ _id: commentId });
@@ -50,18 +47,16 @@ const updateComment = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     const { id } = req.params;
     const { content, userName } = req.body;
     if (!id) {
-        const error = new Error('Id is required');
-        error.status = 400;
-        next(error);
+        return next(new common_1.BadRequestError('Id is required'));
     }
     let updatedComment;
     try {
         updatedComment = yield comment_model_1.Comment.findByIdAndUpdate({ _id: id }, { $set: { content, userName } }, { new: true });
     }
     catch (err) {
-        const error = new Error('Comment can not be updated');
-        error.status = 400;
-        next(error);
+        return next(new common_1.BadRequestError('Comment can not be updated'));
+        //   error.status = 400;
+        //   next(error);
     }
     res.status(200).send(updatedComment);
 });

@@ -11,12 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.showPost = exports.deletePost = exports.updatePost = exports.createNewPost = void 0;
 const post_model_1 = require("../models/post-model");
+const common_1 = require("../common");
 const createNewPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, content } = req.body;
     if (!title || !content) {
-        const error = new Error('Fill out all required fields, please');
-        error.status = 400;
-        return next(error);
+        return next(new common_1.BadRequestError('Fill out all required fields, please'));
     }
     const newPost = new post_model_1.Post({ title, content });
     yield newPost.save();
@@ -44,18 +43,14 @@ const updatePost = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     const { id } = req.params;
     const { content, title } = req.body;
     if (!id) {
-        const error = new Error('Id is required');
-        error.status = 400;
-        next(error);
+        return next(new common_1.BadRequestError('Id is required'));
     }
     let updatedPost;
     try {
         updatedPost = yield post_model_1.Post.findByIdAndUpdate({ _id: id }, { $set: { content, title } }, { new: true });
     }
     catch (err) {
-        const error = new Error('Post can not be updated');
-        error.status = 400;
-        next(error);
+        return next(new common_1.BadRequestError('Post can not be updated'));
     }
     res.status(200).send(updatedPost);
 });
@@ -63,9 +58,7 @@ exports.updatePost = updatePost;
 const deletePost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     if (!id) {
-        const error = new Error('Id is required');
-        error.status = 400;
-        next(error);
+        return next(new common_1.BadRequestError('Id is required'));
     }
     try {
         yield post_model_1.Post.findOneAndRemove({ _id: id });

@@ -25,3 +25,4 @@ __exportStar(require("./comment/update"), exports);
 __exportStar(require("./auth/current-user"), exports);
 __exportStar(require("./auth/signin"), exports);
 __exportStar(require("./auth/signup"), exports);
+__exportStar(require("./auth/signout"), exports);

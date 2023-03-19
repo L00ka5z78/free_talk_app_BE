@@ -14,9 +14,12 @@ import {
 } from './routers';
 import { startConnection } from './utils/dbConnection';
 import config from './config/config';
-import { notFoundErr } from './middleware/notFoundErr';
-import { errMiddleware } from './middleware/errMiddleware';
-import { currentUser, requireAuth } from './common';
+import {
+  currentUser,
+  errorHandler,
+  requireAuth,
+  NotFoundError,
+} from './common';
 
 const app = express();
 app.use(
@@ -28,7 +31,7 @@ app.use(
 app.set('trust proxy', true);
 app.use(
   urlencoded({
-    extended: false /** added after etting proxy to true 51. */,
+    extended: false /** added after getting proxy to true 51. */,
     // extended: true,
   })
 );
@@ -37,8 +40,8 @@ app.use(cookieSession({ signed: false, secure: false }));
 
 app.use(currentUser);
 
-//requireAuth causes error in postman: sth went wrong
-app.use('/api/post', requireAuth, newPostRouter);
+//requireAuth causes error in postman: sth went wrong from my custom err
+app.use('/api/post', newPostRouter);
 app.use('/api/post', requireAuth, deletePostRouter);
 app.use('/api/post', requireAuth, updatePostRouter);
 app.use('/api/post', showPostRouter);
@@ -48,8 +51,11 @@ app.use('/api/comment', requireAuth, deleteCommentRouter);
 app.use('/api/comment', requireAuth, updateCommentRouter);
 app.use('/api/comment', showCommentRouter);
 
-app.all('*', notFoundErr);
-app.use(errMiddleware);
+app.all('*', (req, res, next) => {
+  next(new NotFoundError());
+});
+app.use(errorHandler);
+
 startConnection();
 
 app.listen(8080, () =>

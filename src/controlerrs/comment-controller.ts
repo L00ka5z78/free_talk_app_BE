@@ -1,7 +1,7 @@
-import { CustomError } from '../interfaces/customErr';
 import { Request, Response, NextFunction } from 'express';
 import { Comment } from '../models/comment-model';
 import { Post } from '../models/post-model';
+import { BadRequestError } from '../common';
 
 export const createNewComment = async (
   req: Request,
@@ -12,11 +12,7 @@ export const createNewComment = async (
   const { postId } = req.params;
 
   if (!content) {
-    const error = new Error(
-      'Fill out all required fields, please'
-    ) as CustomError;
-    error.status = 400;
-    return next(error);
+    return next(new BadRequestError('Fill out all required fields, please'));
   }
   const newComment = new Comment({
     userName: userName ? userName : 'anonymous',
@@ -40,9 +36,7 @@ export const deleteComment = async (
 ) => {
   const { commentId, postId } = req.params;
   if (!commentId || postId) {
-    const error = new Error('Id is required') as CustomError;
-    error.status = 400;
-    next(error);
+    return next(new BadRequestError('Id is required'));
   }
   try {
     await Comment.findOneAndRemove({ _id: commentId });
@@ -65,9 +59,7 @@ export const updateComment = async (
   const { id } = req.params;
   const { content, userName } = req.body;
   if (!id) {
-    const error = new Error('Id is required') as CustomError;
-    error.status = 400;
-    next(error);
+    return next(new BadRequestError('Id is required'));
   }
 
   let updatedComment;
@@ -78,9 +70,9 @@ export const updateComment = async (
       { new: true }
     );
   } catch (err) {
-    const error = new Error('Comment can not be updated') as CustomError;
-    error.status = 400;
-    next(error);
+    return next(new BadRequestError('Comment can not be updated'));
+    //   error.status = 400;
+    //   next(error);
   }
   res.status(200).send(updatedComment);
 };

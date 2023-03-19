@@ -11,3 +11,4 @@ export * from './comment/update';
 export * from './auth/current-user';
 export * from './auth/signin';
 export * from './auth/signup';
+export * from './auth/signout';

@@ -10,9 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.requireAuth = void 0;
+const common_1 = require("../common");
 const requireAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.currentUser)
-        return next(new Error('Not authorized'));
+        return next(new common_1.NotAuthorized());
     next();
 });
 exports.requireAuth = requireAuth;
