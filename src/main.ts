@@ -16,6 +16,7 @@ import { startConnection } from './utils/dbConnection';
 import config from './config/config';
 import { notFoundErr } from './middleware/notFoundErr';
 import { errMiddleware } from './middleware/errMiddleware';
+import { currentUser, requireAuth } from './common';
 
 const app = express();
 app.use(
@@ -34,14 +35,17 @@ app.use(
 app.use(json());
 app.use(cookieSession({ signed: false, secure: false }));
 
-app.use('/api/post', newPostRouter);
-app.use('/api/post', deletePostRouter);
-app.use('/api/post', updatePostRouter);
+app.use(currentUser);
+
+//requireAuth causes error in postman: sth went wrong
+app.use('/api/post', requireAuth, newPostRouter);
+app.use('/api/post', requireAuth, deletePostRouter);
+app.use('/api/post', requireAuth, updatePostRouter);
 app.use('/api/post', showPostRouter);
 
-app.use('/api/comment', newCommentRouter);
-app.use('/api/comment', deleteCommentRouter);
-app.use('/api/comment', updateCommentRouter);
+app.use('/api/comment', requireAuth, newCommentRouter);
+app.use('/api/comment', requireAuth, deleteCommentRouter);
+app.use('/api/comment', requireAuth, updateCommentRouter);
 app.use('/api/comment', showCommentRouter);
 
 app.all('*', notFoundErr);

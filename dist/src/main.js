@@ -12,6 +12,7 @@ const dbConnection_1 = require("./utils/dbConnection");
 const config_1 = __importDefault(require("./config/config"));
 const notFoundErr_1 = require("./middleware/notFoundErr");
 const errMiddleware_1 = require("./middleware/errMiddleware");
+const common_1 = require("./common");
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
     origin: '*',
@@ -24,13 +25,15 @@ app.use((0, body_parser_1.urlencoded)({
 }));
 app.use((0, body_parser_1.json)());
 app.use((0, cookie_session_1.default)({ signed: false, secure: false }));
-app.use('/api/post', routers_1.newPostRouter);
-app.use('/api/post', routers_1.deletePostRouter);
-app.use('/api/post', routers_1.updatePostRouter);
+app.use(common_1.currentUser);
+//requireAuth causes error in postman: sth went wrong
+app.use('/api/post', common_1.requireAuth, routers_1.newPostRouter);
+app.use('/api/post', common_1.requireAuth, routers_1.deletePostRouter);
+app.use('/api/post', common_1.requireAuth, routers_1.updatePostRouter);
 app.use('/api/post', routers_1.showPostRouter);
-app.use('/api/comment', routers_1.newCommentRouter);
-app.use('/api/comment', routers_1.deleteCommentRouter);
-app.use('/api/comment', routers_1.updateCommentRouter);
+app.use('/api/comment', common_1.requireAuth, routers_1.newCommentRouter);
+app.use('/api/comment', common_1.requireAuth, routers_1.deleteCommentRouter);
+app.use('/api/comment', common_1.requireAuth, routers_1.updateCommentRouter);
 app.use('/api/comment', routers_1.showCommentRouter);
 app.all('*', notFoundErr_1.notFoundErr);
 app.use(errMiddleware_1.errMiddleware);

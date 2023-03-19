@@ -15,3 +15,5 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./sources/services/authentication"), exports);
+__exportStar(require("../../src/middleware/current-user"), exports);
+__exportStar(require("../../src/middleware/require-auth"), exports);

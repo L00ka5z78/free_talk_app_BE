@@ -22,3 +22,6 @@ __exportStar(require("./comment/new"), exports);
 __exportStar(require("./comment/delete"), exports);
 __exportStar(require("./comment/show"), exports);
 __exportStar(require("./comment/update"), exports);
+__exportStar(require("./auth/current-user"), exports);
+__exportStar(require("./auth/signin"), exports);
+__exportStar(require("./auth/signup"), exports);
