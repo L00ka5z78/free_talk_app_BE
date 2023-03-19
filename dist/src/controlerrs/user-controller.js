@@ -22,7 +22,7 @@ const signUpUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     const user = yield user_model_1.User.findOne({ email });
     if (user)
         return next(new common_1.BadRequestError('User already exists'));
-    const newUser = new user_model_1.User({
+    const newUser = user_model_1.User.build({
         email,
         password,
     });

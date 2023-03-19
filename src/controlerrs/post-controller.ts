@@ -12,7 +12,7 @@ export const createNewPost = async (
   if (!title || !content) {
     return next(new BadRequestError('Fill out all required fields, please'));
   }
-  const newPost = new Post({ title, content });
+  const newPost = Post.build({ title, content });
   await newPost.save();
   res.status(201).send(newPost);
 };

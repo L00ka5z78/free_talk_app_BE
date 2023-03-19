@@ -40,4 +40,7 @@ userSchema.pre('save', function (done) {
         done();
     });
 });
+userSchema.statics.build = (createUserDto) => {
+    return new exports.User(createUserDto);
+};
 exports.User = mongoose_1.default.model('User', userSchema);

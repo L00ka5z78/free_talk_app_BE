@@ -1,4 +1,9 @@
 import mongoose from 'mongoose';
+import {
+  ICommentDoc,
+  ICreateCommentDto,
+  ICommentModel,
+} from '../interfaces/comment-interface';
 
 const commentSchema = new mongoose.Schema({
   userName: {
@@ -10,6 +15,10 @@ const commentSchema = new mongoose.Schema({
   },
 });
 
-export const Comment = mongoose.model('Comment', commentSchema);
+commentSchema.statics.build = (createCommentDto: ICreateCommentDto) =>
+  new Comment(createCommentDto);
 
-// export default Comment;
+export const Comment = mongoose.model<ICommentDoc, ICommentModel>(
+  'Comment',
+  commentSchema
+);

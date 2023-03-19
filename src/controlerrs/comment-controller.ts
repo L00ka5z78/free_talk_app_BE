@@ -14,7 +14,7 @@ export const createNewComment = async (
   if (!content) {
     return next(new BadRequestError('Fill out all required fields, please'));
   }
-  const newComment = new Comment({
+  const newComment = Comment.build({
     userName: userName ? userName : 'anonymous',
     content,
   });
