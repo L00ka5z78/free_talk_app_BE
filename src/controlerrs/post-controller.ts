@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { Post } from '../models/post-model';
+import { User } from '../models/user-model';
 import { BadRequestError } from '../common';
+import { IUserDoc } from '../interfaces/user-interface';
 
 export const createNewPost = async (
   req: Request,
@@ -14,6 +16,14 @@ export const createNewPost = async (
   }
   const newPost = Post.build({ title, content });
   await newPost.save();
+
+  await User.findOneAndUpdate(
+    { _id: req.currentUser!.userId } /* error in postman during testing.
+    ({ _id: req.currentUser.userId }, { $push: { posts: newPost._id } });    
+                           ^ TypeError:Cannot read properties of undefined(reading 'userId*/,
+    { $push: { posts: newPost._id } }
+  );
+
   res.status(201).send(newPost);
 };
 
@@ -68,12 +78,20 @@ export const deletePost = async (
   if (!id) {
     return next(new BadRequestError('Id is required'));
   }
+
   try {
     await Post.findOneAndRemove({ _id: id });
-  } catch (error) {
+  } catch (err) {
     next(new Error('Cant delete this post'));
   }
-  res.status(200).json({ success: true });
+  const user = await User.findOneAndUpdate(
+    { _id: req.currentUser!.userId },
+    { $pull: { posts: id } },
+    { new: true }
+  );
+  if (!user) return next(new Error());
+
+  res.status(200).send(user);
 };
 
 export const showPost = async (

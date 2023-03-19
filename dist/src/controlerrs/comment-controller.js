@@ -19,7 +19,7 @@ const createNewComment = (req, res, next) => __awaiter(void 0, void 0, void 0, f
     if (!content) {
         return next(new common_1.BadRequestError('Fill out all required fields, please'));
     }
-    const newComment = new comment_model_1.Comment({
+    const newComment = comment_model_1.Comment.build({
         userName: userName ? userName : 'anonymous',
         content,
     });
@@ -39,8 +39,10 @@ const deleteComment = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     catch (error) {
         next(new Error('Cant delete this comment'));
     }
-    yield post_model_1.Post.findOneAndUpdate({ _id: postId }, { $pull: { comments: commentId } });
-    res.status(200).json({ success: true });
+    const post = yield post_model_1.Post.findOneAndUpdate({ _id: postId }, { $pull: { comments: commentId } }, { new: true });
+    if (!post)
+        return next(new Error());
+    res.status(200).send(post);
 });
 exports.deleteComment = deleteComment;
 const updateComment = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {

@@ -43,12 +43,14 @@ export const deleteComment = async (
   } catch (error) {
     next(new Error('Cant delete this comment'));
   }
-  await Post.findOneAndUpdate(
+  const post = await Post.findOneAndUpdate(
     { _id: postId },
-    { $pull: { comments: commentId } }
+    { $pull: { comments: commentId } },
+    { new: true }
   );
+  if (!post) return next(new Error());
 
-  res.status(200).json({ success: true });
+  res.status(200).send(post);
 };
 
 export const updateComment = async (
