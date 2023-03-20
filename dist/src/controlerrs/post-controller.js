@@ -8,39 +8,52 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.showPost = exports.deletePost = exports.updatePost = exports.createNewPost = void 0;
+exports.addImg = exports.deleteImg = exports.showPost = exports.deletePost = exports.updatePost = exports.createNewPost = void 0;
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 const post_model_1 = require("../models/post-model");
 const user_model_1 = require("../models/user-model");
 const common_1 = require("../common");
 const createNewPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, content } = req.body;
+    if (!req.file)
+        return next(new common_1.BadRequestError('images are required'));
+    let images;
+    if (typeof req.files === 'object') {
+        images = Object.values(req.files);
+    }
+    else {
+        images = req.files ? [...req.files] : [];
+    }
     if (!title || !content) {
         return next(new common_1.BadRequestError('Fill out all required fields, please'));
     }
-    const newPost = post_model_1.Post.build({ title, content });
+    const newPost = post_model_1.Post.build({
+        title,
+        content,
+        images: images.map((file) => {
+            let sourceObject = {
+                // src: `data:${file.mimetype};base64,${file.buffer.toString('base64')}`,
+                src: `data:${file.mimetype};base64,${fs_1.default
+                    .readFileSync(path_1.default.join('uploadDir' + file.filename))
+                    .toString('base64')}`,
+            };
+            fs_1.default.unlink(path_1.default.join(`upload/ ${file.filename}`), () => { });
+            // fs.unlink(path.join('upload/' + file.filename), () =>{})
+            return sourceObject;
+        }),
+    });
     yield newPost.save();
-    yield user_model_1.User.findOneAndUpdate({ _id: req.currentUser.userId }, { $push: { posts: newPost._id } });
+    yield user_model_1.User.findOneAndUpdate({ _id: req.currentUser.userId } /* error in postman during testing.
+    ({ _id: req.currentUser.userId }, { $push: { posts: newPost._id } });
+                           ^ TypeError:Cannot read properties of undefined(reading 'userId*/, { $push: { posts: newPost._id } });
     res.status(201).send(newPost);
 });
 exports.createNewPost = createNewPost;
-// export const createNewPost = async (
-//   req: Request,
-//   res: Response,
-//   next: (err?: Error) => any
-// ) => {
-//   const { title, content } = req.body;
-//   try {
-//     const post = await Post.create({
-//       title,
-//       content,
-//     });
-//     res.status(201).json({ message: 'Post created successfully!', post });
-//   } catch (error: any) {
-//     console.error(error.message);
-//     res.status(500).send({ error: 'Internal server error' });
-//   }
-// };
 const updatePost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { content, title } = req.body;
@@ -84,3 +97,36 @@ const showPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
     res.status(200).send(post);
 });
 exports.showPost = showPost;
+const deleteImg = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const { imagesIds } = req.body;
+    const post = yield post_model_1.Post.findOneAndUpdate({ _id: id }, { $pull: { images: { _id: { $in: imagesIds } } } }, { new: true });
+    res.status(200).send(post);
+});
+exports.deleteImg = deleteImg;
+const addImg = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    if (!req.file)
+        return next(new common_1.BadRequestError('images are required'));
+    let images;
+    if (typeof req.files === 'object') {
+        images = Object.values(req.files);
+    }
+    else {
+        images = req.files ? [...req.files] : [];
+    }
+    const imagesArray = images.map((file) => {
+        let sourceObject = {
+            // src: `data:${file.mimetype};base64,${file.buffer.toString('base64')}`,
+            src: `data:${file.mimetype};base64,${fs_1.default
+                .readFileSync(path_1.default.join('uploadDir' + file.filename))
+                .toString('base64')}`,
+        };
+        fs_1.default.unlink(path_1.default.join(`upload/ ${file.filename}`), () => { });
+        // fs.unlink(path.join('upload/' + file.filename), () =>{})
+        return sourceObject;
+    });
+    const post = yield post_model_1.Post.findOneAndUpdate({ _id: id }, { $push: { images: { $each: imagesArray } } }, { new: true });
+    res.status(200).send(post);
+});
+exports.addImg = addImg;
