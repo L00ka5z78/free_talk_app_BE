@@ -28,6 +28,8 @@ app.use(common_1.currentUser);
 app.use('/api/post', routers_1.newPostRouter);
 app.use('/api/post', common_1.requireAuth, routers_1.deletePostRouter);
 app.use('/api/post', common_1.requireAuth, routers_1.updatePostRouter);
+app.use('/api/post', common_1.requireAuth, routers_1.addImageRouter);
+app.use('/api/post', common_1.requireAuth, routers_1.deleteImageRouter);
 app.use('/api/post', routers_1.showPostRouter);
 app.use('/api/comment', common_1.requireAuth, routers_1.newCommentRouter);
 app.use('/api/comment', common_1.requireAuth, routers_1.deleteCommentRouter);

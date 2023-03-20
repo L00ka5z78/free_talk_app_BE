@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
+import fs from 'fs';
+import path from 'path';
 import { Post } from '../models/post-model';
 import { User } from '../models/user-model';
-import { BadRequestError } from '../common';
+import { BadRequestError, uploadImages } from '../common';
 import { IUserDoc } from '../interfaces/user-interface';
 
 export const createNewPost = async (
@@ -11,10 +13,36 @@ export const createNewPost = async (
 ) => {
   const { title, content } = req.body;
 
+  if (!req.file) return next(new BadRequestError('images are required'));
+
+  let images: Array<Express.Multer.File>;
+  if (typeof req.files === 'object') {
+    images = Object.values(req.files);
+  } else {
+    images = req.files ? [...req.files] : [];
+  }
+
   if (!title || !content) {
     return next(new BadRequestError('Fill out all required fields, please'));
   }
-  const newPost = Post.build({ title, content });
+
+  const newPost = Post.build({
+    title,
+    content,
+    images: images.map((file: Express.Multer.File) => {
+      let sourceObject = {
+        // src: `data:${file.mimetype};base64,${file.buffer.toString('base64')}`,
+
+        src: `data:${file.mimetype};base64,${fs
+          .readFileSync(path.join('uploadDir' + file.filename))
+          .toString('base64')}`,
+      };
+      fs.unlink(path.join(`upload/ ${file.filename}`), () => {});
+      // fs.unlink(path.join('upload/' + file.filename), () =>{})
+
+      return sourceObject;
+    }),
+  });
   await newPost.save();
 
   await User.findOneAndUpdate(
@@ -26,24 +54,6 @@ export const createNewPost = async (
 
   res.status(201).send(newPost);
 };
-
-// export const createNewPost = async (
-//   req: Request,
-//   res: Response,
-//   next: (err?: Error) => any
-// ) => {
-//   const { title, content } = req.body;
-//   try {
-//     const post = await Post.create({
-//       title,
-//       content,
-//     });
-//     res.status(201).json({ message: 'Post created successfully!', post });
-//   } catch (error: any) {
-//     console.error(error.message);
-//     res.status(500).send({ error: 'Internal server error' });
-//   }
-// };
 
 export const updatePost = async (
   req: Request,
@@ -106,5 +116,56 @@ export const showPost = async (
   }
   const post = await Post.findOne({ _id: id }).populate('comments');
 
+  res.status(200).send(post);
+};
+
+export const deleteImg = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+  const { imagesIds } = req.body;
+
+  const post = await Post.findOneAndUpdate(
+    { _id: id },
+    { $pull: { images: { _id: { $in: imagesIds } } } },
+    { new: true }
+  );
+  res.status(200).send(post);
+};
+
+export const addImg = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+  if (!req.file) return next(new BadRequestError('images are required'));
+
+  let images: Array<Express.Multer.File>;
+  if (typeof req.files === 'object') {
+    images = Object.values(req.files);
+  } else {
+    images = req.files ? [...req.files] : [];
+  }
+  const imagesArray = images.map((file: Express.Multer.File) => {
+    let sourceObject = {
+      // src: `data:${file.mimetype};base64,${file.buffer.toString('base64')}`,
+
+      src: `data:${file.mimetype};base64,${fs
+        .readFileSync(path.join('uploadDir' + file.filename))
+        .toString('base64')}`,
+    };
+    fs.unlink(path.join(`upload/ ${file.filename}`), () => {});
+    // fs.unlink(path.join('upload/' + file.filename), () =>{})
+
+    return sourceObject;
+  });
+  const post = await Post.findOneAndUpdate(
+    { _id: id },
+    { $push: { images: { $each: imagesArray } } },
+    { new: true }
+  );
   res.status(200).send(post);
 };
