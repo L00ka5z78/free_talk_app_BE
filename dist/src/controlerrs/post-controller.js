@@ -31,7 +31,7 @@ const createNewPost = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }
     if (!title || !content) {
         return next(new common_1.BadRequestError('Fill out all required fields, please'));
-    }
+    } //might remove this and add valitate result, or validate
     const newPost = post_model_1.Post.build({
         title,
         content,

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import fs from 'fs';
 import path from 'path';
+import { body } from 'express-validator';
 import { Post } from '../models/post-model';
 import { User } from '../models/user-model';
 import { BadRequestError, uploadImages } from '../common';
@@ -24,7 +25,7 @@ export const createNewPost = async (
 
   if (!title || !content) {
     return next(new BadRequestError('Fill out all required fields, please'));
-  }
+  } //might remove this and add valitate result, or validate
 
   const newPost = Post.build({
     title,
