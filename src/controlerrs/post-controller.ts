@@ -38,7 +38,6 @@ export const createNewPost = async (
           .toString('base64')}`,
       };
       fs.unlink(path.join(`upload/ ${file.filename}`), () => {});
-      // fs.unlink(path.join('upload/' + file.filename), () =>{})
 
       return sourceObject;
     }),
@@ -49,7 +48,6 @@ export const createNewPost = async (
     { _id: req.currentUser!.userId },
     { $push: { posts: newPost._id } }
   );
-
   res.status(201).send(newPost);
 };
 
