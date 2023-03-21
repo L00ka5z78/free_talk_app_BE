@@ -12,6 +12,7 @@ it('returns 201 on successfull signup', async () => {
     })
     .expect(201);
 });
+
 it('sets cookie after successfull signup', async () => {
   const res = await request(app)
     .post('/signup')
