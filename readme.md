@@ -42,3 +42,6 @@ but it was challenging. And I used a LOT of time to figure it out.
 3. There are functions where some code repeats very often. Should be moved to ohter file and imported when needed.
 4. Poor tests structure, just very basic. Needs to be write with more advanced features.
 5. Lack of consequency in some places. Couldnt decide where I should have some files (middleware / common / services)
+
+To succeed with testing one should use "mongodb-memory-server": "^6.9.6" This version causes
+no errors during running test. Before that i used lates version and i got bunch of errors even when test was written well. I dont know the reason why it is like that, but it works.

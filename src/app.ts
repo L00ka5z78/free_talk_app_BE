@@ -22,6 +22,13 @@ import {
   NotFoundError,
 } from './common';
 
+import {
+  currentUserRouter,
+  signInRouter,
+  signUpRouter,
+  signOutRouter,
+} from './routers';
+
 const app = express();
 app.use(
   cors({
@@ -52,6 +59,11 @@ app.use('/api/comment', requireAuth, newCommentRouter);
 app.use('/api/comment', requireAuth, deleteCommentRouter);
 app.use('/api/comment', requireAuth, updateCommentRouter);
 app.use('/api/comment', showCommentRouter);
+
+app.use('/', signUpRouter);
+app.use('/', signInRouter);
+app.use('/', signOutRouter);
+app.use('/', currentUserRouter);
 
 app.all('*', (req, res, next) => {
   next(new NotFoundError());
