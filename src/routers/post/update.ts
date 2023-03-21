@@ -1,10 +1,13 @@
 import { Router } from 'express';
+import { updatePostRequirements, validateResult } from 'src/common';
 import { updatePost } from '../../controlerrs/post-controller';
 
 const router = Router();
 
 router.post(
   '/update/:id',
+  updatePostRequirements,
+  validateResult,
   updatePost
   // async (req: Request, res: Response, next: NextFunction) => {
   //   const { id } = req.params;

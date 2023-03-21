@@ -1,9 +1,19 @@
 import { Router } from 'express';
 import { createNewPost } from '../../controlerrs/post-controller';
-import { uploadImages } from '../../common';
+import {
+  createPostRequirements,
+  uploadImages,
+  validateResult,
+} from '../../common';
 
 const router = Router();
 
-router.post('/new', uploadImages, createNewPost);
+router.post(
+  '/new',
+  createPostRequirements,
+  validateResult,
+  uploadImages,
+  createNewPost
+);
 
 export { router as newPostRouter };

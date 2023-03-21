@@ -1,10 +1,13 @@
 import { Router } from 'express';
+import { createCommentRequirements, validateResult } from 'src/common';
 import { createNewComment } from '../../controlerrs/comment-controller';
 
 const router = Router();
 
 router.post(
   '/new/:postId',
+  createCommentRequirements,
+  validateResult,
   createNewComment
   // async (req: Request, res: Response, next: NextFunction) => {
   //   const { userName, content } = req.body;
