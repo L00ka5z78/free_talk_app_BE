@@ -1,5 +1,4 @@
-import { Request, Response, NextFunction, Router } from 'express';
-import { User } from '../../models/user-model';
+import { Router } from 'express';
 import { signInRequirements, validateResult } from '../../common/index';
 import { signInUser } from '../../controlerrs/user-controller';
 

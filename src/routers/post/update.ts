@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { updatePostRequirements, validateResult } from 'src/common';
+import { updatePostRequirements, validateResult } from '../../common';
+
 import { updatePost } from '../../controlerrs/post-controller';
 
 const router = Router();

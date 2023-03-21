@@ -12,7 +12,7 @@ router.post(
   '/new',
   createPostRequirements,
   validateResult,
-  uploadImages,
+  // uploadImages,
   createNewPost
 );
 
