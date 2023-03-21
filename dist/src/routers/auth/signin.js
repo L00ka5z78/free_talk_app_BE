@@ -2,10 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.signInRouter = void 0;
 const express_1 = require("express");
+const index_1 = require("../../common/index");
 const user_controller_1 = require("../../controlerrs/user-controller");
 const router = (0, express_1.Router)();
 exports.signInRouter = router;
-router.post('/signin', user_controller_1.signInUser
+router.post('/signin', index_1.signInRequirements, index_1.validateResult, user_controller_1.signInUser
 // async (req: Request, res: Response, next: NextFunction) => {
 //   const { email, password } = req.body;
 //   const user = await User.findOne({ email });

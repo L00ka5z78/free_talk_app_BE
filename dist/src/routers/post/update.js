@@ -2,10 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updatePostRouter = void 0;
 const express_1 = require("express");
+const common_1 = require("src/common");
 const post_controller_1 = require("../../controlerrs/post-controller");
 const router = (0, express_1.Router)();
 exports.updatePostRouter = router;
-router.post('/update/:id', post_controller_1.updatePost
+router.post('/update/:id', common_1.updatePostRequirements, common_1.validateResult, post_controller_1.updatePost
 // async (req: Request, res: Response, next: NextFunction) => {
 //   const { id } = req.params;
 //   const { content, title } = req.body;
