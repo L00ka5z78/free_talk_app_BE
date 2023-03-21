@@ -15,5 +15,3 @@ router.post(
   uploadImages,
   createNewPost
 );
-
-export { router as newPostRouter };

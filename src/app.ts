@@ -14,8 +14,7 @@ import {
   showCommentRouter,
   updateCommentRouter,
 } from './routers';
-import { startConnection } from './utils/dbConnection';
-import config from './config/config';
+
 import {
   currentUser,
   errorHandler,
@@ -42,7 +41,6 @@ app.use(cookieSession({ signed: false, secure: false }));
 
 app.use(currentUser);
 
-//requireAuth causes error in postman: sth went wrong from my custom err
 app.use('/api/post', newPostRouter);
 app.use('/api/post', requireAuth, deletePostRouter);
 app.use('/api/post', requireAuth, updatePostRouter);

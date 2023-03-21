@@ -3,13 +3,6 @@ import { signOutUser } from '../../controlerrs/user-controller';
 
 const router = Router();
 
-router.get(
-  '/signout',
-  signOutUser
-  //   async (req: Request, res: Response, next: NextFunction) => {
-  //     req.session = null;
-  //     res.send({});
-  //   }
-);
+router.get('/signout', signOutUser);
 
 export { router as signOutRouter };

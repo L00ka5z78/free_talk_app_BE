@@ -1,4 +1,4 @@
-import { check, validationResult } from 'express-validator';
+import { check } from 'express-validator';
 
 export const signUpRequirements = [
   check('email', 'WHOOPS... Insert email')
@@ -44,5 +44,3 @@ export const createCommentRequirements = [
 export const updateCommentRequirements = [
   check('content', 'WHOOPS... Content is required').notEmpty().trim().escape(),
 ];
-
-/**might not be tho optimal sollution, if it'll not work chage body to check() */

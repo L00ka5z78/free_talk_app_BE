@@ -24,7 +24,7 @@ export const createNewPost = async (
 
   if (!title || !content) {
     return next(new BadRequestError('Fill out all required fields, please'));
-  } //might remove this and add valitate result, or validate
+  }
 
   const newPost = Post.build({
     title,
@@ -46,9 +46,7 @@ export const createNewPost = async (
   await newPost.save();
 
   await User.findOneAndUpdate(
-    { _id: req.currentUser!.userId } /* error in postman during testing.
-    ({ _id: req.currentUser.userId }, { $push: { posts: newPost._id } });    
-                           ^ TypeError:Cannot read properties of undefined(reading 'userId*/,
+    { _id: req.currentUser!.userId },
     { $push: { posts: newPost._id } }
   );
 
