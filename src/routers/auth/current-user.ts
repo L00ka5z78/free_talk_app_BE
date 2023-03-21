@@ -4,13 +4,6 @@ import { currUser } from '../../controlerrs/user-controller';
 
 const router = Router();
 
-router.get(
-  '/current-user',
-  currentUser,
-  currUser
-  //   async (req: Request, res: Response, next: NextFunction) => {
-  //     res.status(200).send({ currentUser: req.currentUser });
-  //   }
-);
+router.get('/current-user', currentUser, currUser);
 
 export { router as currentUserRouter };

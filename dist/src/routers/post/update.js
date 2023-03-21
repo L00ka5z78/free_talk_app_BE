@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updatePostRouter = void 0;
 const express_1 = require("express");
-const common_1 = require("src/common");
+const common_1 = require("../../common");
 const post_controller_1 = require("../../controlerrs/post-controller");
 const router = (0, express_1.Router)();
 exports.updatePostRouter = router;

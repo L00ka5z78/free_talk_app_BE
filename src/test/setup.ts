@@ -4,6 +4,10 @@ import { app } from '../app';
 import request from 'supertest';
 import config from '../config/config';
 
+declare global {
+  var signin: () => Promise<string[]>;
+}
+
 let mongo: any;
 
 beforeAll(async () => {
@@ -28,3 +32,17 @@ afterAll(async () => {
   await mongo.stop();
   await mongoose.connection.close();
 });
+
+global.signin = async () => {
+  const res = await request(app)
+    .post('/signin')
+    .send({
+      email: 'email@email.com',
+      password: '123456',
+    })
+    .expect(201);
+
+  const cookie = res.get('Set-Cookie');
+
+  return cookie;
+};

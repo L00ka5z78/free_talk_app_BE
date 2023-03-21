@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createCommentRequirements, validateResult } from 'src/common';
+import { createCommentRequirements, validateResult } from '../../common';
 import { createNewComment } from '../../controlerrs/comment-controller';
 
 const router = Router();

@@ -4,8 +4,7 @@ import path from 'path';
 import { body } from 'express-validator';
 import { Post } from '../models/post-model';
 import { User } from '../models/user-model';
-import { BadRequestError, uploadImages } from '../common';
-import { IUserDoc } from '../interfaces/user-interface';
+import { BadRequestError } from '../common';
 
 export const createNewPost = async (
   req: Request,

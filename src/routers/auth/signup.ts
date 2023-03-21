@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction, Router } from 'express';
-import { User } from '../../models/user-model';
 import { signUpUser } from '../../controlerrs/user-controller';
 import { signUpRequirements } from '../../middleware/validate';
 import { validateResult } from '../../middleware/validationResults';

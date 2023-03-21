@@ -14,6 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongodb_memory_server_1 = require("mongodb-memory-server");
 const mongoose_1 = __importDefault(require("mongoose"));
+const app_1 = require("../app");
+const supertest_1 = __importDefault(require("supertest"));
 const config_1 = __importDefault(require("../config/config"));
 let mongo;
 beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
@@ -34,3 +36,14 @@ afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
     yield mongo.stop();
     yield mongoose_1.default.connection.close();
 }));
+global.signin = () => __awaiter(void 0, void 0, void 0, function* () {
+    const res = yield (0, supertest_1.default)(app_1.app)
+        .post('/signin')
+        .send({
+        email: 'email@email.com',
+        password: '123456',
+    })
+        .expect(201);
+    const cookie = res.get('Set-Cookie');
+    return cookie;
+});
